@@ -1,0 +1,36 @@
+name: Build Nightly APK
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Si avvia automaticamente ogni notte alle 02:00 UTC
+  workflow_dispatch:     # Ti permette di avviarlo anche manualmente quando vuoi
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scarica il codice sorgente
+        uses: actions/checkout@v4
+
+      - name: Configura Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Configura Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Installa dipendenze e compila APK
+        run: |
+          npm install
+          npx cordova platform add android
+          npx cordova build android
+
+      - name: Salva l'APK generato
+        uses: actions/upload-artifact@v4
+        with:
+          name: waistline-nightly-apk
+          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
