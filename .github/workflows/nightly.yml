@@ -16,7 +16,7 @@ jobs:
       - name: Configura Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 18.x
+          node-version: 22.x
 
       - name: Configura Java JDK
         uses: actions/setup-java@v5
@@ -24,15 +24,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Configura Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Installa Cordova Globalmente
         run: npm install -g cordova
 
       - name: Installa Dipendenze e Compila APK
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm install
-          cordova platform add android
+          cordova platform add android || true
           cordova build android
 
       - name: Salva l'APK generato
